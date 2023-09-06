@@ -1,0 +1,20 @@
+{
+    "name": "pollen/wordpress-args",
+    "description": "Manipulate WordPress arguments as an object.",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Olivier Gorzalka",
+            "email": "olivier@amphibee.fr",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^10.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pollen\\WordPressArgs\\": "src/"
+        }
+    }
+}
