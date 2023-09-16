@@ -51,8 +51,6 @@ trait ArgumentHelper
     {
         $args = $this->extractArgumentFromProperties();
         $args = wp_parse_args($this->getRawArgs() ?? [], $args);
-        $args['names'] = $this->getNames();
-
         return $args;
     }
 
