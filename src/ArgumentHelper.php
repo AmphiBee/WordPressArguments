@@ -17,7 +17,7 @@ trait ArgumentHelper
      *
      * @var args
      */
-    protected $rawArgs;
+    private $rawArgs;
 
     /**
      * Set the raw arguments for the method.
@@ -51,6 +51,7 @@ trait ArgumentHelper
     {
         $args = $this->extractArgumentFromProperties();
         $args = wp_parse_args($this->getRawArgs() ?? [], $args);
+
         return $args;
     }
 
@@ -61,10 +62,9 @@ trait ArgumentHelper
      */
     private function collectGetters(): array
     {
-        $allMethods = get_class_methods($this);
-
-        return array_filter($allMethods, function ($method) {
-            return (str_starts_with($method, 'get') || str_starts_with($method, 'is') || str_starts_with($method, 'has')) && $method !== 'getRawArgs';
+        $methodProperties = array_keys(get_class_vars(get_class($this)));
+        return array_filter($methodProperties, function($propertyName){
+            return $propertyName !== 'rawArgs';
         });
     }
 
@@ -73,29 +73,9 @@ trait ArgumentHelper
      *
      * @return string Argument's name in snake_case format
      */
-    private function makeArgName(string $getter): string
+    private function makeArgName(string $propertyName): string
     {
-        $propertyName = $this->removeMethodPrefix($getter);
-
         return Str::snake($propertyName);
-    }
-
-    /**
-     * Remove the prefix of getter method name (e.g. get, is, has)
-     *
-     * @return string The property name without prefix
-     */
-    private function removeMethodPrefix(string $methodName): string
-    {
-        $prefixes = ['get', 'is', 'has'];
-
-        foreach ($prefixes as $prefix) {
-            if (str_starts_with($methodName, $prefix)) {
-                return substr($methodName, strlen($prefix));
-            }
-        }
-
-        return $methodName;
     }
 
     /**
@@ -109,7 +89,7 @@ trait ArgumentHelper
         $getters = $this->collectGetters();
 
         foreach ($getters as $getter) {
-            $argValue = $this->{$getter}();
+            $argValue = $this->{$getter};
             if ($argValue === null) {
                 continue;
             }
